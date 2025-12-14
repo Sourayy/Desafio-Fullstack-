@@ -46,7 +46,7 @@ namespace Backend.Controllers
                 if (string.IsNullOrEmpty(supplier.RG) || supplier.BirthDate == null)
                     return BadRequest("RG and BirthDate are required for CPF suppliers.");
 
-                if (!Validator.IsValidBirthDate(supplier.BirthDate))
+                if (!Validator.IsValidBirthDateFormat(supplier.BirthDate))
                     return BadRequest("BirthDate must be within the last 100 years and not in the future.");
             }
             else
@@ -78,6 +78,30 @@ namespace Backend.Controllers
             {
                 return Conflict("This email is already registered.");
             }
+
+            try
+            {
+                using var httpClient = new HttpClient();
+                var response = await httpClient.GetAsync($"https://viacep.com.br/ws/{supplier.CEP}/json/");
+
+                if (!response.IsSuccessStatusCode)
+                    return BadRequest("Invalid CEP.");
+
+                var cepData = await response.Content.ReadFromJsonAsync<ViaCepResponse>();
+
+                if (cepData == null || string.IsNullOrEmpty(cepData.cep))
+                    return BadRequest("CEP not found.");
+
+                supplier.UF = cepData.uf;
+                supplier.City = cepData.localidade;
+                supplier.Neighborhood = cepData.bairro;
+                supplier.Street = cepData.logradouro;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error fetching address from CEP: {ex.Message}");
+            }
+
 
             try
             {
@@ -122,10 +146,14 @@ namespace Backend.Controllers
          Name = s.Name,
          Email = s.Email,
          CEP = s.CEP,
+
+         UF = s.UF,
+         City = s.City,
+         Neighborhood = s.Neighborhood,
+         Street = s.Street,
+
          RG = s.RG,
-         BirthDate = s.BirthDate.HasValue
-             ? s.BirthDate.Value.ToString("dd/MM/yyyy")
-             : null
+         BirthDate = s.BirthDate
      })
      .ToListAsync();
 
@@ -176,7 +204,7 @@ namespace Backend.Controllers
                 if (string.IsNullOrEmpty(updatedSupplier.RG) || updatedSupplier.BirthDate == null)
                     return BadRequest("RG and BirthDate are required for CPF suppliers.");
 
-                if (!Validator.IsValidBirthDate(updatedSupplier.BirthDate))
+                if (!Validator.IsValidBirthDateFormat(updatedSupplier.BirthDate))
                     return BadRequest("BirthDate must be within the last 100 years and not in the future.");
 
                 if (currentSupplier.RG != updatedSupplier.RG)
@@ -198,6 +226,26 @@ namespace Backend.Controllers
 
             if (!Validator.IsValidEmail(updatedSupplier.Email))
                 return BadRequest("Invalid email format.");
+
+            if (currentSupplier.CEP != updatedSupplier.CEP)
+            {
+                using var httpClient = new HttpClient();
+                var response = await httpClient.GetAsync($"https://viacep.com.br/ws/{updatedSupplier.CEP}/json/");
+
+                if (!response.IsSuccessStatusCode)
+                    return BadRequest("Invalid CEP.");
+
+                var cepData = await response.Content.ReadFromJsonAsync<ViaCepResponse>();
+
+                if (cepData == null || string.IsNullOrEmpty(cepData.cep))
+                    return BadRequest("CEP not found.");
+
+                currentSupplier.UF = cepData.uf;
+                currentSupplier.City = cepData.localidade;
+                currentSupplier.Neighborhood = cepData.bairro;
+                currentSupplier.Street = cepData.logradouro;
+
+            }
 
 
             currentSupplier.Document = updatedSupplier.Document;

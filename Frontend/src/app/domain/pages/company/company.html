@@ -1,0 +1,90 @@
+<div class="header-area">
+  <h2>Companies List</h2>
+  <button mat-button class="add-button" (click)="openNewCompanyModal()">New Company</button>
+</div>
+
+<div class="filters">
+  <input type="text" placeholder="Filter by name" [formControl]="nameFilter" class="filter-input" />
+
+  <input type="text" placeholder="Filter by CNPJ" [formControl]="cnpjFilter" class="filter-input" />
+</div>
+
+<table mat-table [dataSource]="companies()" class="mat-elevation-z8">
+  <ng-container matColumnDef="cnpj">
+    <th mat-header-cell *matHeaderCellDef>CNPJ</th>
+    <td mat-cell *matCellDef="let company">
+      {{ company.cnpj }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="fantasyName">
+    <th mat-header-cell *matHeaderCellDef>Name</th>
+    <td mat-cell *matCellDef="let company">
+      {{ company.fantasyName }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="cep">
+    <th mat-header-cell *matHeaderCellDef>CEP</th>
+    <td mat-cell *matCellDef="let company">
+      {{ company.cep }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="uf">
+    <th mat-header-cell *matHeaderCellDef>UF</th>
+    <td mat-cell *matCellDef="let company">
+      {{ company.uf }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="city">
+    <th mat-header-cell *matHeaderCellDef>City</th>
+    <td mat-cell *matCellDef="let company">
+      {{ company.city }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="neighborhood">
+    <th mat-header-cell *matHeaderCellDef>Neighborhood</th>
+    <td mat-cell *matCellDef="let company">
+      {{ company.neighborhood }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="street">
+    <th mat-header-cell *matHeaderCellDef>Street</th>
+    <td mat-cell *matCellDef="let company">
+      {{ company.street }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="options">
+    <th mat-header-cell *matHeaderCellDef>Options</th>
+    <td mat-cell *matCellDef="let company">
+      <button mat-icon-button color="primary" (click)="editCompany(company)">
+        <mat-icon>edit</mat-icon>
+      </button>
+
+      <button
+        mat-icon-button
+        (click)="manageSuppliers(company)"
+      >
+        <mat-icon>group</mat-icon>
+      </button>
+
+      <button mat-icon-button color="warn" (click)="deleteCompany(company)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+  <tr class="mat-row" *matNoDataRow>
+    <td class="mat-cell no-data" [attr.colspan]="displayedColumns.length">
+      There are no companies registered
+    </td>
+  </tr>
+</table>

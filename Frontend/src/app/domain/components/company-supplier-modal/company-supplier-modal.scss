@@ -1,0 +1,61 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem 2rem;
+}
+
+.title {
+  text-align: center;
+  color: var(--purple);
+  font-size: clamp(0.3rem, 8vw, 1.5rem);
+}
+
+.filter-input {
+  align-self: flex-end;
+  height: 38px;
+  width: 100%;
+  padding: 0 12px;
+  border-radius: 20px;
+  border: 1px solid #c4c4c4;
+  font-size: 0.85rem;
+  outline: none;
+  transition: all 0.2s ease;
+  background-color: white;
+}
+
+.filter-input::placeholder {
+  color: #999;
+}
+
+.filter-input:focus {
+  border-color: var(--purple);
+  box-shadow: 0 0 0 2px rgba(128, 0, 128, 0.15);
+}
+
+.no-data {
+  text-align: center;
+  color: #c4c4c4;
+}
+
+.add-button {
+  background-color: var(--purple);
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--dark-purple);
+  }
+}
+
+.delete-button {
+  background-color: rgb(220, 154, 248);
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgb(211, 110, 255);
+  }
+}

@@ -18,69 +18,69 @@ namespace Backend.Controllers
             _appDbContext = appDbContext;
         }
 
-       [HttpPost]
-public async Task<IActionResult> AddCompany(Company company)
-{
-    if (!ModelState.IsValid)
-    {
-        return BadRequest(ModelState);
-    }
-
-    if (!Validator.IsValidCNPJ(company.CNPJ))
-    {
-        return BadRequest("Invalid CNPJ.");
-    }
-
-    bool documentExistsInSupplier = await _appDbContext.Suppliers
-        .AnyAsync(s => s.Document == company.CNPJ);
-
-    if (documentExistsInSupplier)
-    {
-        return Conflict("This CNPJ is already registered.");
-    }
-
-    try
-    {
-        using var httpClient = new HttpClient();
-        var response = await httpClient.GetAsync($"https://viacep.com.br/ws/{company.CEP}/json/");
-        
-        if (!response.IsSuccessStatusCode)
-            return BadRequest("Invalid CEP.");
-
-        var cepData = await response.Content.ReadFromJsonAsync<ViaCepResponse>();
-
-        if (cepData == null || string.IsNullOrEmpty(cepData.cep))
+        [HttpPost]
+        public async Task<IActionResult> AddCompany(Company company)
         {
-            return BadRequest("CEP not found.");
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (!Validator.IsValidCNPJ(company.CNPJ))
+            {
+                return BadRequest("Invalid CNPJ.");
+            }
+
+            bool documentExistsInSupplier = await _appDbContext.Suppliers
+                .AnyAsync(s => s.Document == company.CNPJ);
+
+            if (documentExistsInSupplier)
+            {
+                return Conflict("This CNPJ is already registered.");
+            }
+
+            try
+            {
+                using var httpClient = new HttpClient();
+                var response = await httpClient.GetAsync($"https://viacep.com.br/ws/{company.CEP}/json/");
+
+                if (!response.IsSuccessStatusCode)
+                    return BadRequest("Invalid CEP.");
+
+                var cepData = await response.Content.ReadFromJsonAsync<ViaCepResponse>();
+
+                if (cepData == null || string.IsNullOrEmpty(cepData.cep))
+                {
+                    return BadRequest("CEP not found.");
+                }
+
+                company.UF = cepData.uf;
+                company.City = cepData.localidade;
+                company.Neighborhood = cepData.bairro;
+                company.Street = cepData.logradouro;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error fetching address from CEP: {ex.Message}");
+            }
+
+            try
+            {
+                _appDbContext.Companies.Add(company);
+                await _appDbContext.SaveChangesAsync();
+
+                return CreatedAtAction(nameof(GetCompanies), new { id = company.Id }, company);
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is SqlException sqlEx && sqlEx.Number == 2601)
+                {
+                    return Conflict("There is already a company registered with this CNPJ.");
+                }
+
+                return StatusCode(500, $"An unexpected error occurred: {ex.Message}");
+            }
         }
-
-        company.UF = cepData.uf;
-        company.City = cepData.localidade;
-        company.Neighborhood = cepData.bairro;
-        company.Street = cepData.logradouro;
-    }
-    catch (Exception ex)
-    {
-        return StatusCode(500, $"Error fetching address from CEP: {ex.Message}");
-    }
-
-    try
-    {
-        _appDbContext.Companies.Add(company);
-        await _appDbContext.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(GetCompanies), new { id = company.Id }, company);
-    }
-    catch (DbUpdateException ex)
-    {
-        if (ex.InnerException is SqlException sqlEx && sqlEx.Number == 2601)
-        {
-            return Conflict("There is already a company registered with this CNPJ.");
-        }
-
-        return StatusCode(500, $"An unexpected error occurred: {ex.Message}");
-    }
-}
 
 
         [HttpGet]
@@ -143,19 +143,15 @@ public async Task<IActionResult> AddCompany(Company company)
                 if (cepData == null || string.IsNullOrEmpty(cepData.cep))
                     return BadRequest("CEP not found.");
 
-                updatedCompany.UF = cepData.uf;
-                updatedCompany.City = cepData.localidade;
-                updatedCompany.Neighborhood = cepData.bairro;
-                updatedCompany.Street = cepData.logradouro;
+                currentCompany.UF = cepData.uf;
+                currentCompany.City = cepData.localidade;
+                currentCompany.Neighborhood = cepData.bairro;
+                currentCompany.Street = cepData.logradouro;
             }
 
             currentCompany.CNPJ = updatedCompany.CNPJ;
             currentCompany.FantasyName = updatedCompany.FantasyName;
             currentCompany.CEP = updatedCompany.CEP;
-            currentCompany.UF = updatedCompany.UF;
-            currentCompany.City = updatedCompany.City;
-            currentCompany.Neighborhood = updatedCompany.Neighborhood;
-            currentCompany.Street = updatedCompany.Street;
 
             await _appDbContext.SaveChangesAsync();
 

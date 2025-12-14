@@ -1,0 +1,36 @@
+nav {
+  margin-top: 1rem;
+  ul {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    list-style: none;
+  }
+
+  li {
+    font-size: clamp(0.8rem, 8vw, 1.4rem);
+    color: var(--purple);
+    cursor: pointer;
+
+    &:hover {
+      color: var(--dark-purple);
+    }
+
+    &.active {
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 4px;
+      color: var(--dark-purple);
+    }
+  }
+
+  hr {
+    border: 1px solid black;
+    height: 20px;
+  }
+}
+
+.main {
+  padding: 1rem 2rem;
+}

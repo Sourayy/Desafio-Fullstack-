@@ -71,13 +71,25 @@ public static class Validator
         }
     }
 
-    public static bool IsValidBirthDate(DateTime? birthDate)
+    public static bool IsValidBirthDateFormat(string? birthDate)
     {
-        if (!birthDate.HasValue) return false;
+        if (string.IsNullOrWhiteSpace(birthDate))
+            return false;
+
+        if (!DateTime.TryParseExact(
+                birthDate,
+                "MM/dd/yyyy",
+                System.Globalization.CultureInfo.InvariantCulture,
+                System.Globalization.DateTimeStyles.None,
+                out DateTime parsedDate))
+        {
+            return false;
+        }
 
         DateTime today = DateTime.Today;
         DateTime oldest = today.AddYears(-100);
 
-        return birthDate.Value <= today && birthDate.Value >= oldest;
+        return parsedDate <= today && parsedDate >= oldest;
     }
+
 }

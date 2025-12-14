@@ -23,8 +23,19 @@ namespace Backend.Models
         [MaxLength(8)]
         public string CEP { get; set; } = null!;
 
+        [MaxLength(2)]
+        public string? UF { get; set; }
+
+        [MaxLength(100)]
+        public string? City { get; set; }
+
+        [MaxLength(100)]
+        public string? Neighborhood { get; set; }
+
+        [MaxLength(200)]
+        public string? Street { get; set; }
         public string? RG { get; set; }
 
-        public DateTime? BirthDate { get; set; }
+        public string? BirthDate { get; set; }
     }
 }

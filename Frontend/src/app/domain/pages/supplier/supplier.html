@@ -1,0 +1,102 @@
+<div class="header-area">
+  <h2>Suppliers List</h2>
+  <button mat-button class="add-button" (click)="openNewSupplierModal()">New Supplier</button>
+</div>
+
+<div class="filters">
+  <input type="text" placeholder="Filter by name" [formControl]="nameFilter" class="filter-input" />
+
+  <input
+    type="text"
+    placeholder="Filter by CPF / CNPJ"
+    [formControl]="documentFilter"
+    class="filter-input"
+  />
+</div>
+
+<table mat-table [dataSource]="suppliers()" class="mat-elevation-z8">
+  <ng-container matColumnDef="document">
+    <th mat-header-cell *matHeaderCellDef>CPF / CNPJ</th>
+    <td mat-cell *matCellDef="let supplier">
+      {{ supplier.document }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef>Name</th>
+    <td mat-cell *matCellDef="let supplier">
+      {{ supplier.name }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="email">
+    <th mat-header-cell *matHeaderCellDef>Email</th>
+    <td mat-cell *matCellDef="let supplier">
+      {{ supplier.email }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="birthDate">
+    <th mat-header-cell *matHeaderCellDef>Birth Date</th>
+    <td mat-cell *matCellDef="let supplier">
+      {{ supplier.birthDate }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="cep">
+    <th mat-header-cell *matHeaderCellDef>CEP</th>
+    <td mat-cell *matCellDef="let supplier">
+      {{ supplier.cep }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="uf">
+    <th mat-header-cell *matHeaderCellDef>UF</th>
+    <td mat-cell *matCellDef="let supplier">
+      {{ supplier.uf }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="city">
+    <th mat-header-cell *matHeaderCellDef>City</th>
+    <td mat-cell *matCellDef="let supplier">
+      {{ supplier.city }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="neighborhood">
+    <th mat-header-cell *matHeaderCellDef>Neighborhood</th>
+    <td mat-cell *matCellDef="let supplier">
+      {{ supplier.neighborhood }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="street">
+    <th mat-header-cell *matHeaderCellDef>Street</th>
+    <td mat-cell *matCellDef="let supplier">
+      {{ supplier.street }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="options">
+    <th mat-header-cell *matHeaderCellDef>Options</th>
+    <td mat-cell *matCellDef="let supplier">
+      <button mat-icon-button color="primary" (click)="editSupplier(supplier)">
+        <mat-icon>edit</mat-icon>
+      </button>
+
+      <button mat-icon-button color="warn" (click)="deleteSupplier(supplier)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+  <tr class="mat-row" *matNoDataRow>
+    <td class="mat-cell no-data" [attr.colspan]="displayedColumns.length">
+      There are no suppliers registered
+    </td>
+  </tr>
+</table>

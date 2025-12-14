@@ -40,11 +40,21 @@ namespace Backend.Controllers
 
             if (isParana && isCPF)
             {
-                if (supplier.BirthDate == null)
+                if (string.IsNullOrWhiteSpace(supplier.BirthDate))
                     return BadRequest("BirthDate is required for CPF suppliers.");
 
-                int age = DateTime.Today.Year - supplier.BirthDate.Value.Year;
-                if (supplier.BirthDate.Value.Date > DateTime.Today.AddYears(-age))
+                if (!DateTime.TryParseExact(
+                        supplier.BirthDate,
+                        "MM/dd/yyyy",
+                        System.Globalization.CultureInfo.InvariantCulture,
+                        System.Globalization.DateTimeStyles.None,
+                        out DateTime birthDate))
+                {
+                    return BadRequest("BirthDate has invalid format. Use MM/DD/YYYY.");
+                }
+
+                int age = DateTime.Today.Year - birthDate.Year;
+                if (birthDate.Date > DateTime.Today.AddYears(-age))
                     age--;
 
                 if (age < 18)

@@ -1,0 +1,63 @@
+<h2 mat-dialog-title class="title">
+  {{ isEdit ? 'Edit Company' : 'New Company' }}
+</h2>
+
+<form #form="ngForm">
+  <mat-dialog-content>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>CNPJ</mat-label>
+      <input
+        matInput
+        name="cnpj"
+        [(ngModel)]="company.cnpj"
+        required
+        [disabled]="isEdit"
+        #cnpjCtrl="ngModel"
+        (blur)="onCNPJBlur()"
+      />
+      @if(cnpjCtrl.hasError('required') && (cnpjCtrl.dirty || cnpjCtrl.touched)){
+      <mat-error>CNPJ is required</mat-error>
+      } @if(!cnpjValid() && !(cnpjCtrl.hasError('required'))){
+      <mat-error>Invalid CNPJ</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Fantasy Name</mat-label>
+      <input
+        matInput
+        name="fantasyName"
+        [(ngModel)]="company.fantasyName"
+        required
+        #nameCtrl="ngModel"
+      />
+      @if(nameCtrl.hasError('required') && (nameCtrl.dirty || nameCtrl.touched)){
+      <mat-error>Fantasy Name is required</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>CEP</mat-label>
+      <input
+        matInput
+        name="cep"
+        [(ngModel)]="company.cep"
+        required
+        #cepCtrl="ngModel"
+        (blur)="onCEPBlur()"
+      />
+      @if(cepCtrl.hasError('required') && (cepCtrl.dirty || cepCtrl.touched)){
+      <mat-error>CEP is required</mat-error>
+      } @if(!cepValid()){
+      <mat-error>Invalid CEP</mat-error>
+      }
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close class="cancel-button">Cancel</button>
+    <button mat-raised-button class="save-button" (click)="save()" [disabled]="form.invalid">
+      {{ isEdit ? 'Update' : 'Save' }}
+    </button>
+  </mat-dialog-actions>
+</form>

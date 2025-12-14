@@ -1,0 +1,117 @@
+<h2 mat-dialog-title class="title">
+  {{ isEdit() ? 'Edit Supplier' : 'New Supplier' }}
+</h2>
+
+<form #form="ngForm">
+  <mat-dialog-content>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>CPF / CNPJ</mat-label>
+      <input
+        matInput
+        name="document"
+        [(ngModel)]="supplier.document"
+        required
+        [disabled]="isEdit()"
+        (blur)="onDocumentBlur()"
+        #documentCtrl="ngModel"
+        mask="000.000.000-00 || 00.000.000/0000-00"
+      />
+      @if(documentCtrl.hasError('required') && (documentCtrl.dirty || documentCtrl.touched)){
+      <mat-error>CPF/CNPJ is required</mat-error>
+      } @if(!cpfCnpjValid() && !(documentCtrl.hasError('required'))){
+      <mat-error>Invalid CPF/CNPJ</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Name</mat-label>
+      <input matInput name="name" [(ngModel)]="supplier.name" required #nameCtrl="ngModel" />
+      @if(nameCtrl.hasError('required') && (nameCtrl.dirty || nameCtrl.touched)){
+      <mat-error>Name is required</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Email</mat-label>
+      <input
+        matInput
+        type="email"
+        name="email"
+        [(ngModel)]="supplier.email"
+        required
+        email
+        #emailCtrl="ngModel"
+      />
+      @if(emailCtrl.hasError('required') && (emailCtrl.dirty || emailCtrl.touched)){
+      <mat-error>Email is required</mat-error>
+      } @if(emailCtrl.hasError('email') && (emailCtrl.dirty || emailCtrl.touched)){
+      <mat-error>Invalid Email</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>CEP</mat-label>
+      <input
+        matInput
+        name="cep"
+        [(ngModel)]="supplier.cep"
+        required
+        (blur)="onCEPBlur()"
+        #cepCtrl="ngModel"
+        mask="00000-000"
+        placeholder="00000-000"
+      />
+      @if(cepCtrl.hasError('required') && (cepCtrl.dirty || cepCtrl.touched)) {
+      <mat-error>CEP is required</mat-error>
+      } @if(!cepValid() && !(cepCtrl.hasError('required'))){
+      <mat-error>Invalid CEP</mat-error>
+      }
+    </mat-form-field>
+
+    @if(isCPF()){
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>RG</mat-label>
+      <input
+        matInput
+        name="rg"
+        [(ngModel)]="supplier.rg"
+        required
+        (blur)="onRGBlur()"
+        #rgCtrl="ngModel"
+        mask="00.000.000 || 00.000.000-0"
+        placeholder="00.000.000 | 00.000.000-0"
+      />
+      @if(rgCtrl.hasError('required') && (rgCtrl.dirty || rgCtrl.touched)){
+      <mat-error>RG is required</mat-error>
+      } @if(!rgValid() && !(rgCtrl.hasError('required'))){
+      <mat-error>Invalid RG</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Birth Date</mat-label>
+      <input
+        matInput
+        name="birthDate"
+        [(ngModel)]="supplier.birthDate"
+        required
+        #birthDateCtrl="ngModel"
+        mask="00/00/0000"
+        placeholder="MM/dd/yyyy"
+      />
+      @if(birthDateCtrl.hasError('required') && (birthDateCtrl.dirty || birthDateCtrl.touched)){
+
+      <mat-error>Birth Date is required</mat-error>
+      }
+    </mat-form-field>
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close class="cancel-button">Cancel</button>
+    <button mat-raised-button class="save-button" (click)="save()" [disabled]="form.invalid">
+      {{ isEdit() ? 'Update' : 'Save' }}
+    </button>
+  </mat-dialog-actions>
+</form>

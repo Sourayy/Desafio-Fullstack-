@@ -1,0 +1,62 @@
+table {
+  width: 100%;
+}
+
+.filters {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+
+  .filter-input {
+    height: 38px;
+    width: 180px;
+    padding: 0 12px;
+    border-radius: 20px;
+    border: 1px solid #c4c4c4;
+    font-size: 0.85rem;
+    outline: none;
+    transition: all 0.2s ease;
+    background-color: white;
+  }
+
+  .filter-input::placeholder {
+    color: #999;
+  }
+
+  .filter-input:focus {
+    border-color: var(--purple);
+    box-shadow: 0 0 0 2px rgba(128, 0, 128, 0.15);
+  }
+}
+
+.header-area {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  width: 100%;
+
+  h2 {
+    color: var(--purple);
+    font-size: clamp(0.5rem, 8vw, 2rem);
+  }
+
+  .add-button {
+    background-color: var(--purple);
+    color: white;
+    border-radius: 25px;
+
+    &:hover {
+      background-color: var(--dark-purple);
+    }
+  }
+}
+
+.no-data {
+  text-align: center;
+  color: #c4c4c4;
+}
